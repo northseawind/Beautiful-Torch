@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "258260281213",
+    "firebase_url": "https://clean-flashlight.firebaseio.com",
+    "project_id": "clean-flashlight",
+    "storage_bucket": "clean-flashlight.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258260281213:android:36fd1ab548d18fd3",
+        "android_client_info": {
+          "package_name": "com.sickoorange.superflashlight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258260281213-4uf4f5sjfj2097dhamra771f6jplcm53.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sickoorange.superflashlight",
+            "certificate_hash": "d485c849b63f3466441be7c4931524bab6c22f15"
+          }
+        },
+        {
+          "client_id": "258260281213-ar8ej5lr0qct4uc27v35gh4gvm1mhn4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC73HazioC3hCf2_eTyMWQUZ9YqN0INkto"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "258260281213-ar8ej5lr0qct4uc27v35gh4gvm1mhn4p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
