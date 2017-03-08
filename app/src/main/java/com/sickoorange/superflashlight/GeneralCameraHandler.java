@@ -3,6 +3,8 @@ package com.sickoorange.superflashlight;
 import android.content.Context;
 import android.hardware.Camera;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by SickoOrange
  * on 2017/3/7
@@ -51,5 +53,14 @@ public class GeneralCameraHandler {
             camera.release();
             camera = null;
         }
+    }
+
+    public void closeFlashLed() {
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        camera.setParameters(parameters);
+        camera.startPreview();
+    }
+
+    public void startStroboScope(int progress) {
     }
 }

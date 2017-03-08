@@ -60,18 +60,20 @@
         android:layout_margin="20dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/stroboscope_icon"
+        <ImageButton
+            android:id="@+id/stroboscope_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@null"
             android:src="@mipmap/stroboscope"/>
 
         <SeekBar
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+
+            android:layout_margin="20dp"
             />
     </LinearLayout>
 

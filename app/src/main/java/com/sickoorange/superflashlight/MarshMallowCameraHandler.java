@@ -6,6 +6,8 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by SickoOrange
  * on 2017/3/7
@@ -48,6 +50,7 @@ public class MarshMallowCameraHandler {
             mCameraManagement.setTorchMode(cameraId,true);
         } catch (CameraAccessException e) {
             e.printStackTrace();
+            EventBus.getDefault().post(new MessageEvent.cameraError(e.getMessage()));
         }
     }
 
@@ -55,9 +58,9 @@ public class MarshMallowCameraHandler {
     public void closeFlashLed() {
         try {
             mCameraManagement.setTorchMode(cameraId,false);
-            // TODO: 2017/3/8 利用EventsBus 通知Main Thread 更新ImageButton的UI
         } catch (CameraAccessException e) {
             e.printStackTrace();
+            EventBus.getDefault().post(new MessageEvent.cameraError(e.getMessage()));
         }
     }
 

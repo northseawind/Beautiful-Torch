@@ -1,24 +1,16 @@
 package com.sickoorange.superflashlight;
 
-import android.*;
+
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -26,9 +18,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
-import java.security.Permission;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,11 +30,11 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.switch_button)
     ImageButton switch_button;
+    @BindView(R.id.stroboscope_button)
+    ImageButton stroboscope_button;
     @BindView(R.id.seek_bar)
     SeekBar seekBar;
     private boolean flashStatus;
-    private CameraManager mCameraManage;
-    private String mCameraId;
     private MediaPlayer player;
     private CameraHandler cameraHandler;
 
@@ -49,20 +42,47 @@ public class MainActivity extends AppCompatActivity {
     private static final int MAX_STROBO_DELAY = 2000;
     private static final int MIN_STROBO_DELAY = 30;
     private int cameraPermission;
+    private boolean isStorboScopeModeOn;
+
+
+    // This method will be called when a stateChanged MessageEvent is posted
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStateChanged(MessageEvent.stateChanged event) {
+        flashStatus = event.getStatus();
+        if (flashStatus) {
+            switch_button.setImageResource(R.drawable.on);
+        } else {
+            switch_button.setImageResource(R.drawable.off);
+        }
+
+    }
+
+    // This method will be called when a cameraError MessageEvent is posted
+    @Subscribe
+    public void onCameraError(MessageEvent.cameraError event) {
+        Toast.makeText(getApplicationContext(), "Error\n" + event.getErrorMessage(), Toast.LENGTH_LONG).show();
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStorboScopeChanged(MessageEvent.storboScopeChanged event){
+        isStorboScopeModeOn = event.getStatus();
+        System.out.println("闪光灯标志位:"+isStorboScopeModeOn);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        //register EventBus
         isFlashAvailable();
 
-        initGoogleAd();
+        //initGoogleAd();
 
         flashStatus = false;
 
-
+        seekBar.setVisibility(View.INVISIBLE);
         seekBar.setMax(MAX_STROBO_DELAY - MIN_STROBO_DELAY);
         seekBar.setProgress(seekBar.getMax() / 2);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -70,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //// TODO: 2017/3/8 调节闪光灯频率
                 final int frequency = seekBar.getMax() - progress + MIN_STROBO_DELAY;
-                /*if (mCameraImpl != null)
-                    mCameraImpl.setStroboFrequency(frequency);*/
+                if (cameraHandler != null) {
+                    cameraHandler.startStroboScope(frequency);
+                }
 
             }
 
@@ -93,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
 
         if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
             setupCameraHandler();
@@ -110,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 System.out.println("请求权限成功");
                 setupCameraHandler();
-            }else {
+            } else {
                 //// TODO: 2017/3/8 请求权限失败 需要处理的逻辑
             }
         }
@@ -127,7 +149,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cameraHandler.openFlashLed();
+        if (!flashStatus) {
+            cameraHandler.openFlashLed();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //unregister EventBus
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -145,14 +176,35 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.switch_button)
     void switch_button() {
         if (flashStatus) {
-            // turnOff();
+            turnOff();
+            cameraHandler.stopStroboScope();
+            seekBar.setVisibility(View.INVISIBLE);
             playSound();
             flashStatus = false;
-            switch_button.setImageResource(R.drawable.off);
+
         } else {
-            // turnOn();
+            turnOn();
             playSound();
             flashStatus = true;
+
+        }
+    }
+
+    @OnClick(R.id.stroboscope_button)
+    void stroboscope_button(){
+
+
+        if (isStorboScopeModeOn) {
+            System.out.println("关闭闪光灯模式");
+            cameraHandler.stopStroboScope();
+            seekBar.setVisibility(View.INVISIBLE);
+            switch_button.setImageResource(R.drawable.off);
+
+        }else {
+            System.out.println("开启闪光灯模式");
+            final int frequency = seekBar.getMax() - seekBar.getProgress()+ MIN_STROBO_DELAY;
+            cameraHandler.startStroboScope(frequency);
+            seekBar.setVisibility(View.VISIBLE);
             switch_button.setImageResource(R.drawable.on);
         }
     }
@@ -189,21 +241,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-  /*  private void turnOff() {
-        try {
-            mCameraManage.setTorchMode(mCameraId,false);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+    private void turnOff() {
+        cameraHandler.closeFlashLed();
     }
 
 
     private void turnOn() {
-        try {
-            mCameraManage.setTorchMode(mCameraId,true);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }*/
+        cameraHandler.openFlashLed();
+    }
 
 }
