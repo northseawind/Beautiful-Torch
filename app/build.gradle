@@ -5,10 +5,10 @@ android {
     buildToolsVersion "25.0.1"
     defaultConfig {
         applicationId "com.sickoorange.superflashlight"
-        minSdkVersion 23
+        minSdkVersion 15
         targetSdkVersion 25
-        versionCode 3
-        versionName "2.1"
+        versionCode 4
+        versionName "3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -1,5 +1,7 @@
 package com.sickoorange.superflashlight;
 
+import android.*;
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -11,70 +13,149 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.security.Permission;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-  @BindView(R.id.switch_button)
+    @BindView(R.id.switch_button)
     ImageButton switch_button;
+    @BindView(R.id.seek_bar)
+    SeekBar seekBar;
     private boolean flashStatus;
     private CameraManager mCameraManage;
     private String mCameraId;
     private MediaPlayer player;
+    private CameraHandler cameraHandler;
+
+    public static final int REQUEST_CAMERA_PERMISSION = 0;
+    private static final int MAX_STROBO_DELAY = 2000;
+    private static final int MIN_STROBO_DELAY = 30;
+    private int cameraPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Obtain the FirebaseAnalytics instance.
-
         ButterKnife.bind(this);
+
         isFlashAvailable();
+
         initGoogleAd();
+
         flashStatus = false;
-        mCameraManage = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            String[] cameraIdList = mCameraManage.getCameraIdList();
-            mCameraId = cameraIdList[0];
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+
+
+        seekBar.setMax(MAX_STROBO_DELAY - MIN_STROBO_DELAY);
+        seekBar.setProgress(seekBar.getMax() / 2);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //// TODO: 2017/3/8
+                final int frequency = seekBar.getMax() - progress + MIN_STROBO_DELAY;
+                /*if (mCameraImpl != null)
+                    mCameraImpl.setStroboFrequency(frequency);*/
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        cameraPermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
+            setupCameraHandler();
+        } else {
+            String[] PermissionString = {Manifest.permission.CAMERA};
+            ActivityCompat.requestPermissions(this, PermissionString, REQUEST_CAMERA_PERMISSION);
         }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                System.out.println("请求权限成功");
+                setupCameraHandler();
+            }else {
+                //// TODO: 2017/3/8 请求权限失败 需要处理的逻辑
+            }
+        }
+
+    }
+
+    private void setupCameraHandler() {
+        if (cameraHandler == null) {
+            cameraHandler = new CameraHandler(MainActivity.this);
+        }
+    }
+
+    //每次进入应用，默认是打开手电筒的
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cameraHandler.openFlashLed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cameraHandler.releaseCamera();
     }
 
     private void initGoogleAd() {
         AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest=new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
     }
 
     @OnClick(R.id.switch_button)
-    void switch_button(){
+    void switch_button() {
         if (flashStatus) {
-            turnOff();
+            // turnOff();
             playSound();
             flashStatus = false;
             switch_button.setImageResource(R.drawable.off);
-        }else {
-            turnOn();
+        } else {
+            // turnOn();
             playSound();
-            flashStatus=true;
+            flashStatus = true;
             switch_button.setImageResource(R.drawable.on);
         }
     }
-
 
     private void playSound() {
         player = MediaPlayer.create(MainActivity.this, R.raw.flash_sound);
@@ -99,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
             dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //finish();
-                  //  System.exit(0);
+                    finish();
+                    System.exit(0);
                 }
             });
             dialog.show();
@@ -108,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void turnOff() {
+  /*  private void turnOff() {
         try {
             mCameraManage.setTorchMode(mCameraId,false);
         } catch (CameraAccessException e) {
@@ -123,6 +204,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }
