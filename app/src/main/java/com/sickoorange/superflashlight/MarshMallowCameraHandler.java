@@ -55,6 +55,7 @@ public class MarshMallowCameraHandler {
     public void closeFlashLed() {
         try {
             mCameraManagement.setTorchMode(cameraId,false);
+            // TODO: 2017/3/8 利用EventsBus 通知Main Thread 更新ImageButton的UI
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

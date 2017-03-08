@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //// TODO: 2017/3/8
+                //// TODO: 2017/3/8 调节闪光灯频率
                 final int frequency = seekBar.getMax() - progress + MIN_STROBO_DELAY;
                 /*if (mCameraImpl != null)
                     mCameraImpl.setStroboFrequency(frequency);*/

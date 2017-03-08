@@ -39,8 +39,10 @@ public class GeneralCameraHandler {
     }
 
     public void openFlashLed() {
-        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+        // TODO: 2017/3/8 利用EventsBus 通知 Main Thread 更新ImageButton的UI
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
         camera.setParameters(parameters);
+        camera.startPreview();
 
     }
 
