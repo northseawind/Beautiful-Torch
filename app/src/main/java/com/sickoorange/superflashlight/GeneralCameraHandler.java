@@ -42,8 +42,11 @@ public class GeneralCameraHandler {
 
     public void openFlashLed() {
         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-        camera.setParameters(parameters);
-        camera.startPreview();
+        if (camera != null) {
+            camera.setParameters(parameters);
+            camera.startPreview();
+        }
+
 
     }
 

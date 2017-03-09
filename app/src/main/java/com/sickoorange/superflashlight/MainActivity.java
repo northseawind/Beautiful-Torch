@@ -2,10 +2,12 @@ package com.sickoorange.superflashlight;
 
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -18,11 +20,16 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,6 +40,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.main_content)
+    RelativeLayout main_content;
+
+  /*  @BindView(R.id.bg_view)
+    ImageView bg_view;*/
 
     @BindView(R.id.switch_button)
     ImageButton switch_button;
@@ -46,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer player;
     private CameraHandler cameraHandler;
 
-    public static final String TAG=MainActivity.class.getSimpleName();
+
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     public static final int REQUEST_CAMERA_PERMISSION = 0;
     private static final int MAX_STROBO_DELAY = 2000;
@@ -80,20 +94,20 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("闪光灯标志位:" + isStorboScopeModeOn);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: 2017/3/8 背景图片的处理 需要引入高清大图作为背景 但是消耗太大了 需要压缩
-        setStatusBar();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        //register EventBus
+     // Glide.with(this).load(R.drawable.bg_1).fitCenter().dontAnimate().into(bg_view);
         isFlashAvailable();
+        // initGoogleAd();
 
-        //initGoogleAd();
-
+          setStatusBar();
         flashStatus = false;
-
+        main_content.setBackground(new BitmapDrawable(BitmapCompressTools.decodeSampledBitmapFromResource(getResources(), R.drawable.bg_1, 1080, 1920)));
+       // main_content.setBackgroundResource(R.drawable.bg_1);
         seekBar.setVisibility(View.INVISIBLE);
         seekBar.setMax(MAX_STROBO_DELAY - MIN_STROBO_DELAY);
         seekBar.setProgress(seekBar.getMax() / 2);
@@ -121,21 +135,43 @@ public class MainActivity extends AppCompatActivity {
 
         cameraPermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
     }
+
     private void setStatusBar() {
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
-            window.setNavigationBarColor(Color.TRANSPARENT);
+
         }
+
+      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }*/
+
     }
 
+ /*   @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= 19) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+*/
 
     @Override
     protected void onStart() {
@@ -205,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
             turnOff();
             cameraHandler.stopStroboScope();
             seekBar.setVisibility(View.INVISIBLE);
-
+            stroboscope_button.setImageResource(R.mipmap.ic_lightbulb_outline_white_48dp);
             playSound();
             flashStatus = false;
 
@@ -221,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
     void stroboscope_button() {
         if (isStorboScopeModeOn) {
             System.out.println("关闭闪光灯模式");
-            Toast.makeText(getApplicationContext(),R.string.stroboscopeOff,Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.stroboscopeOff, Toast.LENGTH_SHORT).show();
             cameraHandler.stopStroboScope();
             seekBar.setVisibility(View.INVISIBLE);
             switch_button.setImageResource(R.mipmap.ic_power_settings_new_white_48dp);
@@ -229,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             System.out.println("开启闪光灯模式");
-            Toast.makeText(getApplicationContext(),R.string.stroboscopeOn,Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.stroboscopeOn, Toast.LENGTH_SHORT).show();
             final int frequency = seekBar.getMax() - seekBar.getProgress() + MIN_STROBO_DELAY;
             cameraHandler.startStroboScope(frequency);
             seekBar.setVisibility(View.VISIBLE);
