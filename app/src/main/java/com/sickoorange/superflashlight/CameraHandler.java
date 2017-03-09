@@ -35,7 +35,7 @@ class CameraHandler {
     }
 
     private boolean deriveCurrentSDKVersion() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.M;
     }
 
     void openFlashLed() {

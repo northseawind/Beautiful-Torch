@@ -3,8 +3,11 @@ package com.sickoorange.superflashlight;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +15,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -28,15 +33,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+
     @BindView(R.id.switch_button)
     ImageButton switch_button;
     @BindView(R.id.stroboscope_button)
     ImageButton stroboscope_button;
+    @BindView(R.id.screen_bright_button)
+    ImageButton screen_bright_button;
     @BindView(R.id.seek_bar)
     SeekBar seekBar;
     private boolean flashStatus;
     private MediaPlayer player;
     private CameraHandler cameraHandler;
+
+    public static final String TAG=MainActivity.class.getSimpleName();
 
     public static final int REQUEST_CAMERA_PERMISSION = 0;
     private static final int MAX_STROBO_DELAY = 2000;
@@ -50,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
     public void onStateChanged(MessageEvent.stateChanged event) {
         flashStatus = event.getStatus();
         if (flashStatus) {
-            switch_button.setImageResource(R.drawable.on);
+            switch_button.setImageResource(R.mipmap.ic_sentiment_very_satisfied_white_48dp);
         } else {
-            switch_button.setImageResource(R.drawable.off);
+            switch_button.setImageResource(R.mipmap.ic_power_settings_new_white_48dp);
         }
 
     }
@@ -65,14 +75,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onStorboScopeChanged(MessageEvent.storboScopeChanged event){
+    public void onStorboScopeChanged(MessageEvent.storboScopeChanged event) {
         isStorboScopeModeOn = event.getStatus();
-        System.out.println("闪光灯标志位:"+isStorboScopeModeOn);
+        System.out.println("闪光灯标志位:" + isStorboScopeModeOn);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // TODO: 2017/3/8 背景图片的处理 需要引入高清大图作为背景 但是消耗太大了 需要压缩
+        setStatusBar();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         //register EventBus
@@ -88,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //// TODO: 2017/3/8 调节闪光灯频率
                 final int frequency = seekBar.getMax() - progress + MIN_STROBO_DELAY;
                 if (cameraHandler != null) {
                     cameraHandler.startStroboScope(frequency);
@@ -110,6 +121,21 @@ public class MainActivity extends AppCompatActivity {
 
         cameraPermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
     }
+    private void setStatusBar() {
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
+    }
+
 
     @Override
     protected void onStart() {
@@ -179,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
             turnOff();
             cameraHandler.stopStroboScope();
             seekBar.setVisibility(View.INVISIBLE);
+
             playSound();
             flashStatus = false;
 
@@ -191,22 +218,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.stroboscope_button)
-    void stroboscope_button(){
-
-
+    void stroboscope_button() {
         if (isStorboScopeModeOn) {
             System.out.println("关闭闪光灯模式");
+            Toast.makeText(getApplicationContext(),R.string.stroboscopeOff,Toast.LENGTH_SHORT).show();
             cameraHandler.stopStroboScope();
             seekBar.setVisibility(View.INVISIBLE);
-            switch_button.setImageResource(R.drawable.off);
+            switch_button.setImageResource(R.mipmap.ic_power_settings_new_white_48dp);
+            stroboscope_button.setImageResource(R.mipmap.ic_lightbulb_outline_white_48dp);
 
-        }else {
+        } else {
             System.out.println("开启闪光灯模式");
-            final int frequency = seekBar.getMax() - seekBar.getProgress()+ MIN_STROBO_DELAY;
+            Toast.makeText(getApplicationContext(),R.string.stroboscopeOn,Toast.LENGTH_SHORT).show();
+            final int frequency = seekBar.getMax() - seekBar.getProgress() + MIN_STROBO_DELAY;
             cameraHandler.startStroboScope(frequency);
             seekBar.setVisibility(View.VISIBLE);
-            switch_button.setImageResource(R.drawable.on);
+            switch_button.setImageResource(R.mipmap.ic_sentiment_very_satisfied_white_48dp);
+
+            stroboscope_button.setImageResource(R.mipmap.ic_lightbulb_outline_white_48dp_selected);
         }
+    }
+
+    @OnClick(R.id.screen_bright_button)
+    void screen_bright_button() {
+        Intent intent = new Intent(MainActivity.this, BrightActivity.class);
+        startActivity(intent);
     }
 
     private void playSound() {

@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">Simple Flashlight</string>
+    <string name="app_name">Nice Torch</string>
     <string name="light_on">On</string>
     <string name="light_off">Off</string>
     <string name="banner_id">ca-app-pub-6905524421989892/5805137560</string>
+    <string name="stroboscopeOff">Strobo Scope  ist now Off</string>
+    <string name="stroboscopeOn">Strobo Scope ist now On</string>
 </resources>

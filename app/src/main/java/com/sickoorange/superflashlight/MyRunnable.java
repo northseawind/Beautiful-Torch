@@ -1,6 +1,5 @@
 package com.sickoorange.superflashlight;
 
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by SickoOrange
