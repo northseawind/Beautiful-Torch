@@ -277,13 +277,13 @@ public class MainActivity extends AppCompatActivity {
     void more(){
         mTopRightMenu = new TopRightMenu(MainActivity.this);
 
-//添加菜单项
+        //添加菜单项
         List<MenuItem> menuItems = new ArrayList<>();
 
         menuItems.add(new MenuItem(R.drawable.ic_stars_black_36px, getApplicationContext().getString(R.string.rate_us)));
         menuItems.add(new MenuItem(R.drawable.ic_shopping_cart_black_36px, getApplicationContext().getString(R.string.purchase_us)));
-       // menuItems.add(new MenuItem(R.drawable.ic_loyalty_black_36px, getApplicationContext().getString(R.string.magic_skin)));
-        menuItems.add(new MenuItem(R.drawable.ic_account_circle_black_36px, getApplicationContext().getString(R.string.about_us)));
+         // menuItems.add(new MenuItem(R.drawable.ic_loyalty_black_36px, getApplicationContext().getString(R.string.magic_skin)));
+        menuItems.add(new MenuItem(R.drawable.ic_account_circle_black_36px, getApplicationContext().getString(R.string.setting)));
         mTopRightMenu
                 .setHeight(500)     //默认高度480
                 .setWidth(720)      //默认宽度wrap_content
@@ -364,9 +364,9 @@ public class MainActivity extends AppCompatActivity {
         if (!isAvailable) {
             //doesn't support flash
             AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).create();
-            dialog.setTitle("Error!");
-            dialog.setMessage("This device doesn't support flash light!");
-            dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            dialog.setTitle(getApplication().getString(R.string.error));
+            dialog.setMessage(getApplication().getString(R.string.error_info));
+            dialog.setButton(DialogInterface.BUTTON_POSITIVE, getApplication().getString(R.string.ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     finish();

@@ -3,11 +3,14 @@
     <string name="light_on">On</string>
     <string name="light_off">Off</string>
 
+    <string name="error">Error</string>
+    <string name="error_info">This device has no flash light!</string>
+    <string name="ok">OK</string>
+
+
 
     <string name="banner_id_2">ca-app-pub-6905524421989892/8827165963</string>
-
     <string name="banner_id_1">ca-app-pub-6905524421989892/5805137560</string>
-    <!--<string name="banner_id_1">ca-app-pub-6905524421989892/8827165963</string>-->
     <string name="banner_id_3">ca-app-pub-6905524421989892/1303899167</string>
 
 
@@ -22,7 +25,7 @@
 
     <string name="rate_us">Rate us in the Play Store</string>
     <string name="purchase_us">Purchase this App to remove Ads</string>
-    <string name="about_us">About this App</string>
+    <string name="setting">Setting</string>
 
 
     <string name="website">More simple apps and source code at:\nhttp://simplemobiletools.com</string>
