@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/about_holder"
@@ -22,6 +23,8 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:text="@string/website"/>-->
+
+
 
         <TextView
             android:id="@+id/about_email_label"
@@ -66,7 +69,7 @@
             android:layout_below="@+id/about_rate_us"
             android:paddingBottom="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_horizontal_margin"
-            android:text="@string/pauchase_us_underlined"
+            android:text="@string/purchase_us_underlined"
             android:textColor="@color/colorAccent"/>
 
 
@@ -79,5 +82,6 @@
             android:gravity="center_horizontal|bottom"
             android:paddingTop="@dimen/activity_horizontal_margin"
             android:text="@string/copyright"/>
+
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -3,12 +3,14 @@ package com.sickoorange.superflashlight;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -118,8 +120,13 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
      // Glide.with(this).load(R.drawable.bg_1).fitCenter().dontAnimate().into(bg_view);
         isFlashAvailable();
-        // initGoogleAd();
+         initGoogleAd();
         setStatusBar();
+
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+            String[] PermissionString = {Manifest.permission.CAMERA};
+            ActivityCompat.requestPermissions(this, PermissionString, REQUEST_CAMERA_PERMISSION);
+        }
         flashStatus = false;
         main_content.setBackground(new BitmapDrawable(getResources(),BitmapCompressTools.decodeSampledBitmapFromResource(getResources(), R.drawable.bg_1, 720, 1280)));
        // main_content.setBackgroundResource(R.drawable.bg_1);
@@ -219,9 +226,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!flashStatus) {
-            cameraHandler.openFlashLed();
-        }
+
+    /*    if (cameraHandler != null) {
+
+            if (!flashStatus) {
+                cameraHandler.openFlashLed();
+            }
+        }*/
+
     }
 
     @Override
@@ -274,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         menuItems.add(new MenuItem(R.drawable.ic_account_circle_black_36px, getApplicationContext().getString(R.string.about_us)));
         mTopRightMenu
                 .setHeight(500)     //默认高度480
-                .setWidth(800)      //默认宽度wrap_content
+                .setWidth(720)      //默认宽度wrap_content
                 .showIcon(true)     //显示菜单图标，默认为true
                 .dimBackground(true)        //背景变暗，默认为true
                 .needAnimationStyle(true)   //显示动画，默认为true
@@ -285,8 +297,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onMenuItemClick(int position) {
                         switch(position){
                             case 0:
+                                final Uri uri = Uri.parse("market://details?id=" + getPackageName());
+                                try {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                                } catch (ActivityNotFoundException ignored) {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getStoreUrl())));
+                                }
                                 break;
                             case 1:
+                                // TODO: 2017/3/10
                                 break;
                             case 2:
                                 startActivity(new Intent(MainActivity.this,AboutUsActivity.class));
@@ -366,6 +385,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void turnOn() {
         cameraHandler.openFlashLed();
+    }
+    private String getStoreUrl() {
+        return "https://play.google.com/store/apps/details?id=" + getPackageName();
     }
 
 }

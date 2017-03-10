@@ -79,6 +79,7 @@ class CameraHandler {
         runnable.setMarshMallow(isUponMarshMallow);
         runnable.setStroboFrequency(progress);
         runnable.shouldStopStroboScope(false);
+        EventBus.getDefault().post(new MessageEvent.stateChanged(true));
         EventBus.getDefault().post(new MessageEvent.storboScopeChanged(true));
 
     }
@@ -87,6 +88,7 @@ class CameraHandler {
     public void stopStroboScope() {
         if (runnable != null) {
             runnable.shouldStopStroboScope(true);
+            EventBus.getDefault().post(new MessageEvent.stateChanged(false));
             EventBus.getDefault().post(new MessageEvent.storboScopeChanged(false));
         }
 

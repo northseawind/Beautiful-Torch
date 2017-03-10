@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,15 +65,31 @@ public class AboutUsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about_us);
         ButterKnife.bind(this);
         setStatusBar();
-        mRes=getResources();
+        mRes = getResources();
         initView();
+        initGoogleAd();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener()
 
+        {
+            @Override
+            public void onClick (View v){
+                onBackPressed();
+            }
+        });
         if (!isload) {
-            Glide.with(this).load(R.drawable.header_image).diskCacheStrategy(DiskCacheStrategy.RESULT).centerCrop().into(imageView);
+            Glide.with(this).load(R.drawable.header).diskCacheStrategy(DiskCacheStrategy.RESULT).centerCrop().into(imageView);
             isload = true;
         }
     }
+
+       private void initGoogleAd() {
+        AdView mAdView3 = (AdView) findViewById(R.id.adView_3);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView3.loadAd(adRequest);
+    }
+
+
 
     private void initView() {
         setSupportActionBar(toolbar);
@@ -129,7 +148,7 @@ public class AboutUsActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.about_invite)
-    public void inviteFriend(){
+    public void inviteFriend() {
 
         final Intent intent = new Intent();
         final String text = String.format(getString(R.string.share_text), getString(R.string.app_name), getStoreUrl());
@@ -152,9 +171,11 @@ public class AboutUsActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.about_pauchase_us)
-    void pauchaseUsClick(){
+    void pauchaseUsClick() {
         // TODO: 2017/3/10 pauchase us via play store
     }
+
+
 
     private String getStoreUrl() {
         return "https://play.google.com/store/apps/details?id=" + getPackageName();

@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class BrightActivity extends AppCompatActivity {
 
     @Override
@@ -17,7 +20,22 @@ public class BrightActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bright);
         if (getSupportActionBar() != null)
             getSupportActionBar().hide();
+        initGoogleAd();
+     //   initGoogleAd_2();
     }
+
+    private void initGoogleAd() {
+        System.out.println("init google ad");
+        AdView mAdView2 = (AdView) findViewById(R.id.adView_2);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView2.loadAd(adRequest);
+    }
+
+  /*   private void initGoogleAd_2() {
+        AdView mAdView3 = (AdView) findViewById(R.id.adView_3);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView3.loadAd(adRequest);
+    }*/
 
     private void setStatusBar() {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
