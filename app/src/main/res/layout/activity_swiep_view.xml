@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Swiep_content_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sickoorange.superflashlight.SwiepViewActivity">
+
+
+    <com.sickoorange.superflashlight.swipeviewsrc.SwipeAdapterView
+        android:id="@+id/swipe_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        swipe:max_visible="4"
+        swipe:min_adapter_stack="4"
+        swipe:y_offset_step="28dp"
+        />
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="82dp"
+        android:text="hello"/>
+
+</RelativeLayout>

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,24 +17,35 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
+
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+
 import android.widget.Toast;
 
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-
+import com.zaaach.toprightmenu.MenuItem;
+import com.zaaach.toprightmenu.TopRightMenu;
 
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_content)
     RelativeLayout main_content;
 
-  /*  @BindView(R.id.bg_view)
-    ImageView bg_view;*/
+    @BindView(R.id.more)
+    ImageButton more;
+
 
     @BindView(R.id.switch_button)
     ImageButton switch_button;
@@ -67,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int MIN_STROBO_DELAY = 30;
     private int cameraPermission;
     private boolean isStorboScopeModeOn;
+    private TopRightMenu mTopRightMenu;
 
 
     // This method will be called when a stateChanged MessageEvent is posted
@@ -80,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 
     // This method will be called when a cameraError MessageEvent is posted
     @Subscribe
@@ -103,11 +119,19 @@ public class MainActivity extends AppCompatActivity {
      // Glide.with(this).load(R.drawable.bg_1).fitCenter().dontAnimate().into(bg_view);
         isFlashAvailable();
         // initGoogleAd();
-
-          setStatusBar();
+        setStatusBar();
         flashStatus = false;
-        main_content.setBackground(new BitmapDrawable(BitmapCompressTools.decodeSampledBitmapFromResource(getResources(), R.drawable.bg_1, 1080, 1920)));
+        main_content.setBackground(new BitmapDrawable(getResources(),BitmapCompressTools.decodeSampledBitmapFromResource(getResources(), R.drawable.bg_1, 720, 1280)));
        // main_content.setBackgroundResource(R.drawable.bg_1);
+        
+        //初始化可移动的CardView
+       /* more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
+
         seekBar.setVisibility(View.INVISIBLE);
         seekBar.setMax(MAX_STROBO_DELAY - MIN_STROBO_DELAY);
         seekBar.setProgress(seekBar.getMax() / 2);
@@ -136,6 +160,11 @@ public class MainActivity extends AppCompatActivity {
         cameraPermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
     }
 
+
+
+
+
+
     private void setStatusBar() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -148,30 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }*/
 
     }
 
- /*   @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && Build.VERSION.SDK_INT >= 19) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
-    }
-*/
 
     @Override
     protected void onStart() {
@@ -253,6 +261,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.more)
+    void more(){
+        mTopRightMenu = new TopRightMenu(MainActivity.this);
+
+//添加菜单项
+        List<MenuItem> menuItems = new ArrayList<>();
+
+        menuItems.add(new MenuItem(R.drawable.ic_stars_black_36px, getApplicationContext().getString(R.string.rate_us)));
+        menuItems.add(new MenuItem(R.drawable.ic_shopping_cart_black_36px, getApplicationContext().getString(R.string.purchase_us)));
+       // menuItems.add(new MenuItem(R.drawable.ic_loyalty_black_36px, getApplicationContext().getString(R.string.magic_skin)));
+        menuItems.add(new MenuItem(R.drawable.ic_account_circle_black_36px, getApplicationContext().getString(R.string.about_us)));
+        mTopRightMenu
+                .setHeight(500)     //默认高度480
+                .setWidth(800)      //默认宽度wrap_content
+                .showIcon(true)     //显示菜单图标，默认为true
+                .dimBackground(true)        //背景变暗，默认为true
+                .needAnimationStyle(true)   //显示动画，默认为true
+                .setAnimationStyle(R.style.TRM_ANIM_STYLE)
+                .addMenuList(menuItems)
+                .setOnMenuItemClickListener(new TopRightMenu.OnMenuItemClickListener() {
+                    @Override
+                    public void onMenuItemClick(int position) {
+                        switch(position){
+                            case 0:
+                                break;
+                            case 1:
+                                break;
+                            case 2:
+                                startActivity(new Intent(MainActivity.this,AboutUsActivity.class));
+                                break;
+                        }
+                    }
+                })
+                .showAsDropDown(more, -225, 0);  //带偏移量
+    }
+
+
     @OnClick(R.id.stroboscope_button)
     void stroboscope_button() {
         if (isStorboScopeModeOn) {
@@ -280,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, BrightActivity.class);
         startActivity(intent);
     }
+
 
     private void playSound() {
         player = MediaPlayer.create(MainActivity.this, R.raw.flash_sound);

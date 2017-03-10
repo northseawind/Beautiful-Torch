@@ -1,8 +1,38 @@
 <resources>
-    <string name="app_name">Nice Torch</string>
+    <string name="app_name">Pretty Light</string>
     <string name="light_on">On</string>
     <string name="light_off">Off</string>
     <string name="banner_id">ca-app-pub-6905524421989892/5805137560</string>
     <string name="stroboscopeOff">Strobo Scope  ist now Off</string>
     <string name="stroboscopeOn">Strobo Scope ist now On</string>
+    <string name="rate">Take a moment to rate this App in Google Play!</string>
+    <string name="purchase">purchase this App and enjoy free Ads APP</string>
+    <string name="about">Orange Technik, Take Your Life to Feature</string>
+    <string name="magic_skin">Tired of the skin? Replace it now!</string>
+    <string name="rate_us">Rate us in Google Play</string>
+    <string name="purchase_us">Purchase this App to remove ads</string>
+    <string name="about_us">About this App</string>
+
+
+    <string name="website">More simple apps and source code at:\nhttp://simplemobiletools.com</string>
+    <string name="email_label">Send your feedback or suggestions to:</string>
+    <string name="email" translatable="false"><u>orange.technik@gmail.com</u></string>
+    <string name="invite_friends_underlined"><u>Invite friends</u></string>
+    <string name="share_text">Hey, come check out %1$s at %2$s</string>
+    <string name="invite_via">Invite via</string>
+
+    <string name="rate_us_underlined"><u>Rate us in the Play Store</u></string>
+    <string name="copyright">V3.0\nCopyright © Orange Technik 2017</string>
+    <string name="pauchase_us_underlined"><u>pauschase us in the Play Store</u></string>
+    <string name="welcome">Pretty Light, Pretty Bright</string>
+    <string name="developer">Orange Technik</string>
+    <string name="word">Technology, make your life better</string>
+    <string name="app_introduction">most beautiful, most simple\nbring the pretty light for your life\nuse it and make your life better</string>
+    <string name="age">Age</string>
+    <string name="secret_value">secret</string>
+    <string name="Fans">Fans</string>
+    <string name="sex">sex</string>
+    <string name="sex_value">^_^</string>
+    <string name="fans_value">0</string>
+    <string name="xxx">xxx </string>
 </resources>

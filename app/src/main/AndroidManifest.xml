@@ -22,7 +22,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/My.AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -30,6 +31,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".BrightActivity">
+        </activity>
+        <activity android:name=".AboutUsActivity"
+                  android:theme="@style/My.AppTheme">
         </activity>
     </application>
 

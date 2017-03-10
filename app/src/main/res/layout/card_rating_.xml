@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="18dp"
+              android:layout_marginLeft="18dp"
+              android:layout_marginRight="18dp"
+              android:background="@drawable/home01_bg_card">
+
+    <ImageView
+        android:contentDescription="@null"
+        android:id="@+id/portrait"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:minHeight="150dp"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tx_rate_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="#565656"
+            android:textSize="16sp"/>
+        <TextView
+            android:id="@+id/tx_rate_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_centerHorizontal="true"
+            android:maxLines="1"
+            android:text=""
+            android:layout_marginTop="20dp"
+            android:textColor="#565656"
+            android:textSize="16sp"/>
+
+        <CheckedTextView
+            android:id="@+id/yes_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tx_rate_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/home01_btn_collect"
+            android:gravity="center"
+            android:text="Go To Google Play and Rate"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
