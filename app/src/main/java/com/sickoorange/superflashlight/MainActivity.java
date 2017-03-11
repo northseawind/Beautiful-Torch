@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -19,12 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -281,11 +275,13 @@ public class MainActivity extends AppCompatActivity {
         List<MenuItem> menuItems = new ArrayList<>();
 
         menuItems.add(new MenuItem(R.drawable.ic_stars_black_36px, getApplicationContext().getString(R.string.rate_us)));
-        menuItems.add(new MenuItem(R.drawable.ic_shopping_cart_black_36px, getApplicationContext().getString(R.string.purchase_us)));
+         //menuItems.add(new MenuItem(R.drawable.ic_shopping_cart_black_36px, getApplicationContext().getString(R.string.purchase_us)));
          // menuItems.add(new MenuItem(R.drawable.ic_loyalty_black_36px, getApplicationContext().getString(R.string.magic_skin)));
+        menuItems.add(new MenuItem(R.drawable.ic_share_black_36px, getApplicationContext().getString(R.string.invite)));
+       // menuItems.add(new MenuItem(R.drawable.ic_shopping_cart_black_36px, getApplicationContext().getString(R.string.purchase_us)));
         menuItems.add(new MenuItem(R.drawable.ic_account_circle_black_36px, getApplicationContext().getString(R.string.setting)));
         mTopRightMenu
-                .setHeight(500)     //默认高度480
+                .setHeight(720)     //默认高度480
                 .setWidth(720)      //默认宽度wrap_content
                 .showIcon(true)     //显示菜单图标，默认为true
                 .dimBackground(true)        //背景变暗，默认为true
@@ -305,8 +301,23 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 break;
                             case 1:
-                                // TODO: 2017/3/10
+                                final Intent intent = new Intent();
+                                final String text = String.format(getString(R.string.share_text), getString(R.string.app_name), getStoreUrl());
+                                intent.setAction(Intent.ACTION_SEND);
+                                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+                                intent.putExtra(Intent.EXTRA_TEXT, text);
+                                intent.setType("text/plain");
+                                startActivity(Intent.createChooser(intent, getString(R.string.invite_via)));
                                 break;
+                         /*   case 2:
+                                final Uri uri2 = Uri.parse("market://details?id=" + "com.sickoorange.prettylightpro");
+                                try {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, uri2));
+                                } catch (ActivityNotFoundException ignored) {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getStoreUrl())));
+                                }
+                                break;*/
+
                             case 2:
                                 startActivity(new Intent(MainActivity.this,AboutUsActivity.class));
                                 break;

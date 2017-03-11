@@ -169,11 +169,16 @@ public class AboutUsActivity extends AppCompatActivity {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getStoreUrl())));
         }
     }
-
-    @OnClick(R.id.about_pauchase_us)
-    void pauchaseUsClick() {
-        // TODO: 2017/3/10 pauchase us via play store
-    }
+/*
+    @OnClick(R.id.about_purchase_us)
+    void purchaseUsClick() {
+        final Uri uri2 = Uri.parse("market://details?id=" + "com.sickoorange.prettylightpro");
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, uri2));
+        } catch (ActivityNotFoundException ignored) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getStoreUrl())));
+        }
+    }*/
 
 
 
